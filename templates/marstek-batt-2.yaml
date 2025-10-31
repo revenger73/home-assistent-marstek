@@ -1,0 +1,54 @@
+- sensor:
+  - name: "Maandelijkse efficiency - Batt 2"
+    unique_id: lilygo_marstek_2_monthly_efficiency
+    unit_of_measurement: "%"
+    icon: mdi:calendar-month
+    state: >
+      {% set charging = states('sensor.lilygo_rs485_2_marstek_monthly_charging_energy') | float(0) %}
+      {% set discharging = states('sensor.lilygo_rs485_2_marstek_monthly_discharging_energy') | float(0) %}
+      {% if charging > 0 %}
+        {{ ((discharging / charging) * 100) | round(1) }}
+      {% else %}
+        0
+      {% endif %}
+
+- sensor:
+  - name: "Totaal efficiency - Batt 2"
+    unique_id: lilygo_marstek_2_total_efficiency
+    unit_of_measurement: "%"
+    icon: mdi:battery-high
+    state: >
+      {% set charging = states('sensor.lilygo_rs485_2_marstek_total_charging_energy') | float(0) %}
+      {% set discharging = states('sensor.lilygo_rs485_2_marstek_total_discharging_energy') | float(0) %}
+      {% if charging > 0 %}
+        {{ ((discharging / charging) * 100) | round(1) }}
+      {% else %}
+        0
+      {% endif %}
+
+      
+- sensor:
+  - name: "Batterij resttijd - Batt 2"
+    unique_id: lilygo_marstek_2_runtime_estimate
+    state: >
+      {% set soc = states('sensor.lilygo_rs485_2_marstek_battery_state_of_charge') | float(0) %}
+      {% set power = states('sensor.lilygo_rs485_2_marstek_battery_power') | float(0) %}
+      {% set cap_total = 5120 %}
+      {% set cap_min = 665.6 %}
+      {% set cap_now = (soc / 100.0) * cap_total %}
+      {% if soc <= 13 and power >= -20 %}
+        Leeg
+      {% elif power > 20 %}
+        {% set wh_needed = cap_total - cap_now %}
+        {% set hours = wh_needed / power %}
+        Vol in: {{ (hours // 1) | int }}h {{ ((hours % 1) * 60) | int }}min
+      {% elif power < -20 %}
+        {% set wh_available = cap_now - cap_min %}
+        {% set hours = wh_available / (power | abs) %}
+        Leeg in: {{ (hours // 1) | int }}h {{ ((hours % 1) * 60) | int }}min
+      {% else %}
+        Standby
+      {% endif %}
+    availability: >
+      {{ states('sensor.lilygo_rs485_2_marstek_battery_state_of_charge') | is_number and
+          states('sensor.lilygo_rs485_2_marstek_battery_power') | is_number }}
