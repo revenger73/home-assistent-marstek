@@ -26,6 +26,9 @@ views:
         cards:
           - type: custom:mushroom-title-card
             title: 🔋 Batterij 1
+            title_tap_action:
+              action: navigate
+              navigation_path: /dashboard-batterijen/1
           - type: horizontal-stack
             cards:
               - type: tile
@@ -63,6 +66,9 @@ views:
         cards:
           - type: custom:mushroom-title-card
             title: 🔋 Batterij 2
+            title_tap_action:
+              action: navigate
+              navigation_path: /dashboard-batterijen/batterij-2
           - type: horizontal-stack
             cards:
               - type: tile
@@ -100,6 +106,9 @@ views:
         cards:
           - type: custom:mushroom-title-card
             title: 🔋 Batterij 3
+            title_tap_action:
+              action: navigate
+              navigation_path: /dashboard-batterijen/batterij-3
           - type: horizontal-stack
             cards:
               - type: tile
